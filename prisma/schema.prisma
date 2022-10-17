@@ -1,0 +1,35 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Car {
+  id    String @id @default(uuid()) @db.VarChar(63)
+  model String @db.VarChar(255)
+
+  trafficVolume TrafficVolume[]
+}
+
+model Location {
+  id      String @id @default(uuid()) @db.VarChar(63)
+  address String @db.VarChar(255)
+
+  trafficVolume TrafficVolume[]
+}
+
+model TrafficVolume {
+  id         String   @id @db.VarChar(63)
+  imageId    String   @db.VarChar(63)
+  location   Location @relation(fields: [locationId], references: [id])
+  locationId String   @db.VarChar(63)
+  car        Car      @relation(fields: [carId], references: [id])
+  carId      String   @db.VarChar(63)
+  time       DateTime @db.DateTime()
+}
