@@ -20,4 +20,18 @@ export class LocationMysql implements LocationRepository {
     }
     return new Location(prismaLocationObject.id, prismaLocationObject.address);
   }
+
+  async readAll(): Promise<Location[]> {
+    const prismaLocationObjects = await this.prisma.location.findMany();
+    const locations: Location[] = [];
+    for (let i = 0; i < prismaLocationObjects.length; i++) {
+      locations.push(
+        new Location(
+          prismaLocationObjects[i].id,
+          prismaLocationObjects[i].address,
+        ),
+      );
+    }
+    return locations;
+  }
 }

@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 import { aggregateHandler } from './controller/aggregate_handler';
+import { locationHandler } from './controller/location_handler';
 import { presignedUrlHandler } from './controller/presigned_url_handler';
 import { resultHandler } from './controller/result_handler';
 import { seedHandler } from './controller/seed_handler';
@@ -22,6 +23,11 @@ export class AppController {
   @Get('result')
   async result(): Promise<string> {
     return resultHandler();
+  }
+
+  @Get('location')
+  async locations(): Promise<string> {
+    return locationHandler();
   }
 
   @Get('seed')
