@@ -9,6 +9,15 @@ async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter(),
+    {
+      cors: {
+        origin: [
+          'http://localhost:3000',
+          'http://localhost:8080',
+          'https://ec2-54-95-74-14.ap-northeast-1.compute.amazonaws.com',
+        ],
+      },
+    },
   );
 
   await app.listen(3000);

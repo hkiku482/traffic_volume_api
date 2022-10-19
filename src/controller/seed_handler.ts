@@ -54,7 +54,7 @@ export const seedHandler = async (): Promise<string> => {
   console.log(car3);
 
   return JSON.stringify({
-    cars: [car3, car2, car3],
+    cars: [car1, car2, car3],
     locations: [location1, location2, location3],
   });
 };

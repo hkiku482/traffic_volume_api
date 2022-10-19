@@ -5,6 +5,7 @@ import { locationHandler } from './controller/location_handler';
 import { presignedUrlHandler } from './controller/presigned_url_handler';
 import { resultHandler } from './controller/result_handler';
 import { seedHandler } from './controller/seed_handler';
+import { Location } from './domains/location';
 
 @Controller('')
 export class AppController {
@@ -27,12 +28,19 @@ export class AppController {
 
   @Get('location')
   async locations(): Promise<string> {
-    return locationHandler();
+    // return locationHandler();
+    const locations = [];
+    locations.push(new Location('111', 'location1'));
+    locations.push(new Location('222', 'location2'));
+    locations.push(new Location('333', 'location3'));
+    locations.push(new Location('444', 'location4'));
+    return JSON.stringify(locations);
   }
 
   @Get('seed')
   async seed(): Promise<string> {
-    return seedHandler();
+    // return seedHandler();
+    return '';
   }
 
   @Get('debug')
