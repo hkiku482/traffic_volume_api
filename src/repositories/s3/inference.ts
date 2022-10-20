@@ -42,7 +42,7 @@ export class InferenceS3Bucket implements InferenceRepository {
   async newFilepath(locationId: string): Promise<string> {
     // example: directory/uuid-uuid.location-id.jpeg
     const bucketKey = this.prefix + v4() + '.' + locationId + '.jpeg';
-    const s3 = new S3Client({ region: process.env.RANDOM_S3_BUCKET });
+    const s3 = new S3Client({ region: process.env.REGION });
 
     const command = new PutObjectCommand({
       Bucket: process.env.RANDOM_S3_BUCKET,
