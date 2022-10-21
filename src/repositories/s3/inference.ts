@@ -1,5 +1,7 @@
 import { DetectCustomLabelsCommandInput } from '@aws-sdk/client-rekognition';
 import {
+  CopyObjectCommand,
+  DeleteObjectCommand,
   GetObjectCommand,
   ListObjectsCommand,
   ListObjectsCommandOutput,
@@ -11,7 +13,8 @@ import { v4 } from 'uuid';
 import { InferenceRepository } from '../inference_repository';
 
 export class InferenceS3Bucket implements InferenceRepository {
-  private readonly prefix: string = 'pre_inference/';
+  private readonly prefixPreInference: string = 'pre_inference/';
+  private readonly prefixInferenced: string = 'inferenced/';
 
   async listPreInferenceImages(): Promise<string[]> {
     const files = [];
@@ -22,7 +25,7 @@ export class InferenceS3Bucket implements InferenceRepository {
     const res: ListObjectsCommandOutput = await s3.send(
       new ListObjectsCommand({
         Bucket: process.env.RANDOM_S3_BUCKET,
-        Prefix: this.prefix,
+        Prefix: this.prefixPreInference,
       }),
     );
 
@@ -35,23 +38,35 @@ export class InferenceS3Bucket implements InferenceRepository {
     return files;
   }
 
-  async moveInferencedImage(): Promise<void[]> {
-    throw new Error('Method not implemented.');
+  async moveInferencedImage(filepath: string): Promise<void> {
+    const newKey = this.prefixInferenced + filepath.split('/').slice(-1)[0];
+    const s3 = new S3Client({ region: process.env.REGION });
+    const copyCommand = new CopyObjectCommand({
+      Bucket: process.env.RANDOM_S3_BUCKET,
+      CopySource: filepath,
+      Key: newKey,
+    });
+    await s3.send(copyCommand);
+    const deleteCommand = new DeleteObjectCommand({
+      Bucket: process.env.RANDOM_S3_BUCKET,
+      Key: filepath,
+    });
+    await s3.send(deleteCommand);
   }
 
   async newFilepath(locationId: string): Promise<string> {
     // example: directory/uuid-uuid.location-id.jpeg
-    const bucketKey = this.prefix + v4() + '.' + locationId + '.jpeg';
+    const bucketKey =
+      this.prefixPreInference + v4() + '.' + locationId + '.jpeg';
     const s3 = new S3Client({ region: process.env.REGION });
 
     const command = new PutObjectCommand({
       Bucket: process.env.RANDOM_S3_BUCKET,
       Key: bucketKey,
       ContentType: 'image/jpeg',
-      ContentEncoding: 'base64',
     });
 
-    return await getSignedUrl(s3, command);
+    return await getSignedUrl(s3, command, { expiresIn: 300 });
   }
 
   getLocationIdByFilepath(filepath: string): string {
