@@ -26,7 +26,7 @@ export class DetectCarModels implements DetectModels {
     );
 
     // Move images from pre_inference/ to inferenced/
-    this.inferenceRepository.moveInferencedImage();
+    this.inferenceRepository.moveInferencedImage(this.filepath);
 
     if (res.CustomLabels === undefined) return [];
     const labels: string[] = [];
