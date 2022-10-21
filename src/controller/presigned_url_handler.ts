@@ -9,6 +9,7 @@ export const presignedUrlHandler = async (
 
   const randomBucket = new InferenceS3Bucket();
   const url = await randomBucket.newFilepath(location_id);
+  console.log(url)
   return JSON.stringify({
     presigned_url: url,
   });
