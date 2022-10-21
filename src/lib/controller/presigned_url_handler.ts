@@ -1,4 +1,4 @@
-import { InferenceS3Bucket } from 'src/repositories/s3/inference';
+import { InferenceS3Bucket } from 'src/s3/inference';
 
 export const presignedUrlHandler = async (
   location_id: string,
@@ -9,7 +9,7 @@ export const presignedUrlHandler = async (
 
   const randomBucket = new InferenceS3Bucket();
   const url = await randomBucket.newFilepath(location_id);
-  console.log(url)
+  console.log(url);
   return JSON.stringify({
     presigned_url: url,
   });

@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-import { Car } from '../../domains/car';
-import { Location } from '../../domains/location';
-import { TrafficVolume } from '../../domains/traffic_volume';
-import { TrafficVolumeRepository } from '../traffic_volume_repository';
+import { Car } from '../lib/domains/car';
+import { Location } from '../lib/domains/location';
+import { TrafficVolume } from '../lib/domains/traffic_volume';
+import { TrafficVolumeRepository } from '../lib/repositories/traffic_volume_repository';
 
 export class TrafficVolumeMysql implements TrafficVolumeRepository {
   private readonly prisma: PrismaClient;

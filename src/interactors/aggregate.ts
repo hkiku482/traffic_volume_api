@@ -1,10 +1,10 @@
 import { v4 } from 'uuid';
-import { TrafficVolume } from '../domains/traffic_volume';
-import { CarRepository } from '../repositories/car_repository';
-import { InferenceRepository } from '../repositories/inference_repository';
-import { LocationRepository } from '../repositories/location_repository';
-import { TrafficVolumeRepository } from '../repositories/traffic_volume_repository';
-import { AggregateUsecase } from '../usecases/aggregate_usecase';
+import { TrafficVolume } from '../lib/domains/traffic_volume';
+import { CarRepository } from '../lib/repositories/car_repository';
+import { InferenceRepository } from '../lib/repositories/inference_repository';
+import { LocationRepository } from '../lib/repositories/location_repository';
+import { TrafficVolumeRepository } from '../lib/repositories/traffic_volume_repository';
+import { AggregateUsecase } from '../lib/usecases/aggregate_usecase';
 import { DetectCarModels } from './detect_car_models';
 
 export class Aggregate implements AggregateUsecase {

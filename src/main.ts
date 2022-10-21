@@ -14,7 +14,7 @@ async function bootstrap() {
         origin: [
           'http://localhost:3000',
           'http://localhost:8080',
-          'https://ec2-18-81-118-129.ap-northeast-1.compute.amazonaws.com',
+          'https://ec2-53-24-28-12.ap-northeast-1.compute.amazonaws.com',
         ],
       },
     },

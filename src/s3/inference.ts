@@ -10,7 +10,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { v4 } from 'uuid';
-import { InferenceRepository } from '../inference_repository';
+import { InferenceRepository } from '../lib/repositories/inference_repository';
 
 export class InferenceS3Bucket implements InferenceRepository {
   private readonly prefixPreInference: string = 'pre_inference/';

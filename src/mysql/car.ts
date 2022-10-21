@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { Car } from '../../domains/car';
-import { CarRepository } from '../car_repository';
+import { Car } from '../lib/domains/car';
+import { CarRepository } from '../lib/repositories/car_repository';
 
 export class CarMysql implements CarRepository {
   private readonly prisma: PrismaClient;

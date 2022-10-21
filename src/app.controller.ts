@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
-import { aggregateHandler } from './controller/aggregate_handler';
-import { locationHandler } from './controller/location_handler';
-import { presignedUrlHandler } from './controller/presigned_url_handler';
-import { resultHandler } from './controller/result_handler';
-import { seedHandler } from './controller/seed_handler';
-import { Location } from './domains/location';
+import { aggregateHandler } from './lib/controller/aggregate_handler';
+import { locationHandler } from './lib/controller/location_handler';
+import { presignedUrlHandler } from './lib/controller/presigned_url_handler';
+import { resultHandler } from './lib/controller/result_handler';
+import { seedHandler } from './lib/controller/seed_handler';
+import { Location } from './lib/domains/location';
 
 @Controller('')
 export class AppController {

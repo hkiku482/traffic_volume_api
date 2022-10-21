@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { Location } from '../../domains/location';
-import { LocationRepository } from '../location_repository';
+import { Location } from '../lib/domains/location';
+import { LocationRepository } from '../lib/repositories/location_repository';
 
 export class LocationMysql implements LocationRepository {
   private readonly prisma: PrismaClient;

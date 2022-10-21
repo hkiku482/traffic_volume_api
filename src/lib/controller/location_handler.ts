@@ -1,4 +1,4 @@
-import { LocationMysql } from 'src/repositories/mysql/location';
+import { LocationMysql } from 'src/mysql/location';
 
 export const locationHandler = async (): Promise<string> => {
   const locationRepository = new LocationMysql();

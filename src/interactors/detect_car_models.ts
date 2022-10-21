@@ -2,8 +2,8 @@ import {
   Rekognition,
   DetectCustomLabelsCommand,
 } from '@aws-sdk/client-rekognition';
-import { InferenceRepository } from '../repositories/inference_repository';
-import { DetectModels } from '../usecases/detect_models';
+import { InferenceRepository } from '../lib/repositories/inference_repository';
+import { DetectModels } from '../lib/usecases/detect_models';
 
 export class DetectCarModels implements DetectModels {
   private readonly inferenceRepository: InferenceRepository;

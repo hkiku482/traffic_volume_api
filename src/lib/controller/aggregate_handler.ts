@@ -1,8 +1,8 @@
 import { Aggregate, AggregateInteractorInput } from 'src/interactors/aggregate';
-import { CarMysql } from 'src/repositories/mysql/car';
-import { LocationMysql } from 'src/repositories/mysql/location';
-import { TrafficVolumeMysql } from 'src/repositories/mysql/traffic_volume';
-import { InferenceS3Bucket } from 'src/repositories/s3/inference';
+import { CarMysql } from 'src/mysql/car';
+import { LocationMysql } from 'src/mysql/location';
+import { TrafficVolumeMysql } from 'src/mysql/traffic_volume';
+import { InferenceS3Bucket } from 'src/s3/inference';
 
 export const aggregateHandler = async (): Promise<string> => {
   const input: AggregateInteractorInput = {
