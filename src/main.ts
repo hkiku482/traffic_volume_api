@@ -14,7 +14,7 @@ async function bootstrap() {
         origin: [
           'http://localhost:3000',
           'http://localhost:8080',
-          'https://ec2-18-43-90-11.ap-northeast-1.compute.amazonaws.com',
+          process.env.ORIGIN,
         ],
       },
     },
