@@ -34,8 +34,9 @@ export class DetectCarModels implements DetectModels {
       if (res.CustomLabels[i].Name === undefined) continue;
       if (res.CustomLabels[i].Confidence === undefined) continue;
       if ((res.CustomLabels[i].Confidence ?? '') < 70) {
-        labels.push(res.CustomLabels[i].Name ?? '');
+        labels.push(res.CustomLabels[i].Name);
       }
+      console.log('detect: ' + res.CustomLabels[i].Name);
     }
 
     return labels;

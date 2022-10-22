@@ -1,3 +1,6 @@
+import { Result } from '../domains/result';
+
 export interface ReadResultUsecase {
-  handler(): Promise<void>;
+  overall(): Promise<Result>;
+  locationDetail(locationId: string): Promise<Result>;
 }

@@ -32,6 +32,10 @@ export class Aggregate implements AggregateUsecase {
     const files: string[] =
       await this.inrefenceRepository.listPreInferenceImages();
 
+    for (let i = 0; i < files.length; i++) {
+      console.log('target' + (i + 1) + ': ' + files[i]);
+    }
+
     // custom labels detection from 1 file
     const trafficVolume: TrafficVolume[] = [];
     for (let i = 0; i < files.length; i++) {

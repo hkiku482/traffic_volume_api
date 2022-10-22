@@ -31,6 +31,7 @@
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/platform-fastify": "^9.1.4",
     "@prisma/client": "^4.4.0",
+    "@types/uuid": "^8.3.4",
     "fastify": "^4.8.1",
     "graphql": "^16.6.0",
     "mercurius": "^11.0.1",

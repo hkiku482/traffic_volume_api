@@ -50,4 +50,29 @@ export class TrafficVolumeMysql implements TrafficVolumeRepository {
       prismaObject.time,
     );
   }
+
+  async readTrafficVolumeByModel(carId: string): Promise<number> {
+    const count = await this.prisma.trafficVolume.aggregate({
+      where: {
+        carId: carId,
+      },
+      _count: {
+        carId: true,
+      },
+    });
+    return count._count.carId;
+  }
+
+  async readTrafficVolumeByTime(hour: number): Promise<number> {
+    if (hour < 0 || hour < 24) {
+      throw new Error('invalid hour format: need 0 ~ 23');
+    }
+    const count = this.prisma.trafficVolume.aggregate({
+      // where: {
+      //   time: {
+      //   }
+      // },
+    });
+    throw new Error('Method not implemented.');
+  }
 }
