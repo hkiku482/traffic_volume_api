@@ -2,15 +2,12 @@ import {
   Rekognition,
   DetectCustomLabelsCommand,
 } from '@aws-sdk/client-rekognition';
-import { InferenceRepository } from '../lib/repositories/inference_repository';
-import { DetectModels } from '../lib/usecases/detect_models';
+import { DetectModelsUsecase } from '../lib/usecases/detect_models_usecase';
 
-export class DetectCarModels implements DetectModels {
-  private readonly inferenceRepository: InferenceRepository;
+export class DetectCarModels implements DetectModelsUsecase {
   private readonly filepath: string;
 
-  constructor(inferenceRepository: InferenceRepository, filepath: string) {
-    this.inferenceRepository = inferenceRepository;
+  constructor(filepath: string) {
     this.filepath = filepath;
   }
 
@@ -20,14 +17,18 @@ export class DetectCarModels implements DetectModels {
       region: process.env.REGION,
     });
     const res = await rekognition.send(
-      new DetectCustomLabelsCommand(
-        this.inferenceRepository.getRekognitionCommand(this.filepath),
-      ),
+      new DetectCustomLabelsCommand({
+        Image: {
+          S3Object: {
+            Bucket: process.env.RANDOM_S3_BUCKET,
+            Name: this.filepath,
+          },
+        },
+        ProjectVersionArn: process.env.REKOGNITION_CUSTOM_LABELS_ARN,
+      }),
     );
 
-    // Move images from pre_inference/ to inferenced/
-    this.inferenceRepository.moveInferencedImage(this.filepath);
-
+    // Optimization the data structure.
     if (res.CustomLabels === undefined) return [];
     const labels: string[] = [];
     for (let i = 0; i < res.CustomLabels.length; i++) {

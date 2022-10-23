@@ -51,28 +51,59 @@ export class TrafficVolumeMysql implements TrafficVolumeRepository {
     );
   }
 
-  async readTrafficVolumeByModel(carId: string): Promise<number> {
-    const count = await this.prisma.trafficVolume.aggregate({
-      where: {
-        carId: carId,
-      },
-      _count: {
-        carId: true,
-      },
-    });
+  async readTrafficVolumeByModel(
+    carId: string,
+    locationId = '',
+  ): Promise<number> {
+    const count =
+      locationId === ''
+        ? // location id is empty
+          await this.prisma.trafficVolume.aggregate({
+            where: {
+              carId: carId,
+            },
+            _count: {
+              carId: true,
+            },
+          })
+        : // location id specified
+          await this.prisma.trafficVolume.aggregate({
+            where: {
+              carId: carId,
+              locationId: locationId,
+            },
+            _count: {
+              carId: true,
+            },
+          });
     return count._count.carId;
   }
 
-  async readTrafficVolumeByTime(hour: number): Promise<number> {
+  async readTrafficVolumeByTime(
+    hour: number,
+    locationId = '',
+  ): Promise<number> {
     if (hour < 0 || hour < 24) {
       throw new Error('invalid hour format: need 0 ~ 23');
     }
-    const count = this.prisma.trafficVolume.aggregate({
-      // where: {
-      //   time: {
-      //   }
-      // },
-    });
-    throw new Error('Method not implemented.');
+    const prismaObject =
+      locationId === ''
+        ? // location id is empty
+          await this.prisma.trafficVolume.findMany({})
+        : // location id specified
+          await this.prisma.trafficVolume.findMany({
+            where: {
+              locationId: locationId,
+            },
+          });
+
+    let count = 0;
+
+    for (let i = 0; i < prismaObject.length; i++) {
+      if (prismaObject[i].time.getHours() === hour) {
+        count++;
+      }
+    }
+    return count;
   }
 }

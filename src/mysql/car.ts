@@ -32,4 +32,13 @@ export class CarMysql implements CarRepository {
     }
     return new Car(prismaCarObject.id, prismaCarObject.model);
   }
+
+  async readAll(): Promise<Car[]> {
+    const prismaObject = await this.prisma.car.findMany({});
+    const cars: Car[] = [];
+    for (let i = 0; i < prismaObject.length; i++) {
+      cars.push(new Car(prismaObject[i].id, prismaObject[i].model));
+    }
+    return cars;
+  }
 }

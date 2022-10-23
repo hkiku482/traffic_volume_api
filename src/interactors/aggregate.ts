@@ -28,7 +28,7 @@ export class Aggregate implements AggregateUsecase {
       throw Error('failed to load env');
     }
 
-    // get source files
+    // Get source files.
     const files: string[] =
       await this.inrefenceRepository.listPreInferenceImages();
 
@@ -36,18 +36,18 @@ export class Aggregate implements AggregateUsecase {
       console.log('target' + (i + 1) + ': ' + files[i]);
     }
 
-    // custom labels detection from 1 file
     const trafficVolume: TrafficVolume[] = [];
-    for (let i = 0; i < files.length; i++) {
-      const detectModels = new DetectCarModels(
-        this.inrefenceRepository,
-        files[i],
-      );
 
-      // inference
+    for (let i = 0; i < files.length; i++) {
+      const detectModels = new DetectCarModels(files[i]);
+
+      // Execute detection.
       const labels = await detectModels.handler();
 
-      // for data store declaration
+      // Move images from pre_inference/ to inferenced/
+      this.inrefenceRepository.moveInferencedImage(files[i]);
+
+      // Optimization the data structure.
       const location = await this.locationRepository.readById(
         this.inrefenceRepository.getLocationIdByFilepath(files[i]),
       );
@@ -55,7 +55,6 @@ export class Aggregate implements AggregateUsecase {
         this.inrefenceRepository.getTrafficVolumeIdByFilepath(files[i]);
       const date = await this.inrefenceRepository.getCreationDate(files[i]);
 
-      // make traffic volume domain
       for (let k = 0; k < labels.length; k++) {
         const car = await this.carRepository.readByModel(labels[k]);
         trafficVolume.push(

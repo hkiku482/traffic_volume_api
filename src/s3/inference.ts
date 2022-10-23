@@ -41,12 +41,14 @@ export class InferenceS3Bucket implements InferenceRepository {
   async moveInferencedImage(filepath: string): Promise<void> {
     const newKey = this.prefixInferenced + filepath.split('/').slice(-1)[0];
     const s3 = new S3Client({ region: process.env.REGION });
+
     const copyCommand = new CopyObjectCommand({
       Bucket: process.env.RANDOM_S3_BUCKET,
-      CopySource: filepath,
+      CopySource: process.env.RANDOM_S3_BUCKET + '/' + filepath,
       Key: newKey,
     });
     await s3.send(copyCommand);
+
     const deleteCommand = new DeleteObjectCommand({
       Bucket: process.env.RANDOM_S3_BUCKET,
       Key: filepath,
@@ -99,17 +101,5 @@ export class InferenceS3Bucket implements InferenceRepository {
       throw new Error('creation date not found');
     }
     return res.LastModified;
-  }
-
-  getRekognitionCommand(path: string): DetectCustomLabelsCommandInput {
-    return {
-      Image: {
-        S3Object: {
-          Bucket: process.env.RANDOM_S3_BUCKET,
-          Name: path,
-        },
-      },
-      ProjectVersionArn: process.env.REKOGNITION_CUSTOM_LABELS_ARN,
-    };
   }
 }
