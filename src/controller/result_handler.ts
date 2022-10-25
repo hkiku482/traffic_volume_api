@@ -10,12 +10,18 @@ export const resultHandler = async (locationsId = ''): Promise<string> => {
     trafficVolumeRepository: new TrafficVolumeMysql(),
   };
   const readResult = new ReadResult(input);
-  const result =
-    locationsId === ''
-      ? await readResult.overall()
-      : await readResult.locationDetail(locationsId);
 
-  return JSON.stringify({
-    results: result,
-  });
+  try {
+    const result =
+      locationsId === ''
+        ? await readResult.overall()
+        : await readResult.locationDetail(locationsId);
+    return JSON.stringify({
+      results: result,
+    });
+  } catch (error) {
+    return JSON.stringify({
+      error: error,
+    });
+  }
 };

@@ -1,4 +1,3 @@
-import { DetectCustomLabelsCommandInput } from '@aws-sdk/client-rekognition';
 import {
   CopyObjectCommand,
   DeleteObjectCommand,
@@ -10,7 +9,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { v4 } from 'uuid';
-import { InferenceRepository } from '../lib/repositories/inference_repository';
+import { InferenceRepository } from '../../lib/repositories/inference_repository';
 
 export class InferenceS3Bucket implements InferenceRepository {
   private readonly prefixPreInference: string = 'pre_inference/';
@@ -34,6 +33,8 @@ export class InferenceS3Bucket implements InferenceRepository {
     for (let i = 0; i < res.Contents.length; i++) {
       files.push(res.Contents[i].Key);
     }
+
+    files.shift();
 
     return files;
   }

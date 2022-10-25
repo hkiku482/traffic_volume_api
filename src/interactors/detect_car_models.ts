@@ -2,7 +2,7 @@ import {
   Rekognition,
   DetectCustomLabelsCommand,
 } from '@aws-sdk/client-rekognition';
-import { DetectModelsUsecase } from '../lib/usecases/detect_models_usecase';
+import { DetectModelsUsecase } from '../../lib/usecases/detect_models_usecase';
 
 export class DetectCarModels implements DetectModelsUsecase {
   private readonly filepath: string;
@@ -30,16 +30,29 @@ export class DetectCarModels implements DetectModelsUsecase {
 
     // Optimization the data structure.
     if (res.CustomLabels === undefined) return [];
+    if (res.CustomLabels.length === 0) {
+      console.log('CAR: 検出されませんでした');
+      return [];
+    }
     const labels: string[] = [];
     for (let i = 0; i < res.CustomLabels.length; i++) {
       if (res.CustomLabels[i].Name === undefined) continue;
       if (res.CustomLabels[i].Confidence === undefined) continue;
-      if ((res.CustomLabels[i].Confidence ?? '') < 70) {
-        labels.push(res.CustomLabels[i].Name);
+      if (res.CustomLabels[i].Confidence < 70) {
+        console.log(
+          'CAR: 低確率のためスキップしました (' + res.CustomLabels[i] + ' %)',
+        );
+        continue;
       }
-      console.log('detect: ' + res.CustomLabels[i].Name);
+      labels.push(res.CustomLabels[i].Name);
+      console.log(
+        'CAR: ' +
+          res.CustomLabels[i].Name +
+          'が検出されました (' +
+          res.CustomLabels[i].Confidence +
+          ' %)',
+      );
     }
-
     return labels;
   }
 }

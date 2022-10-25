@@ -1,4 +1,4 @@
-import { DetectModelsUsecase } from 'src/lib/usecases/detect_models_usecase';
+import { DetectModelsUsecase } from '../../lib/usecases/detect_models_usecase';
 
 export class RekognitionMock implements DetectModelsUsecase {
   private readonly models: string[] = ['prius', 'toyota86', 'yaris'];

@@ -1,8 +1,8 @@
-import { Result } from 'src/lib/domains/result';
-import { CarRepository } from 'src/lib/repositories/car_repository';
-import { LocationRepository } from 'src/lib/repositories/location_repository';
-import { TrafficVolumeRepository } from 'src/lib/repositories/traffic_volume_repository';
-import { ReadResultUsecase } from 'src/lib/usecases/read_result_usecase';
+import { Result } from '../..//lib/domains/result';
+import { CarRepository } from '../..//lib/repositories/car_repository';
+import { LocationRepository } from '../..//lib/repositories/location_repository';
+import { TrafficVolumeRepository } from '../..//lib/repositories/traffic_volume_repository';
+import { ReadResultUsecase } from '../..//lib/usecases/read_result_usecase';
 
 export class ReadResult implements ReadResultUsecase {
   private readonly trafficVolumeRepository: TrafficVolumeRepository;
@@ -51,7 +51,7 @@ export class ReadResult implements ReadResultUsecase {
       });
     }
 
-    console.log('result:\n' + result);
+    console.log('result:\n' + JSON.stringify(result));
     return result;
   }
 }

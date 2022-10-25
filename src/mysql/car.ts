@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { Car } from '../lib/domains/car';
-import { CarRepository } from '../lib/repositories/car_repository';
+import { Car } from '../../lib/domains/car';
+import { CarRepository } from '../../lib/repositories/car_repository';
 
 export class CarMysql implements CarRepository {
   private readonly prisma: PrismaClient;
@@ -10,35 +10,47 @@ export class CarMysql implements CarRepository {
   }
 
   async readById(id: string): Promise<Car> {
-    const prismaCarObject = await this.prisma.car.findUnique({
-      where: {
-        id: id,
-      },
-    });
-    if (prismaCarObject === null) {
-      throw new Error('object not found: ' + id);
+    try {
+      const prismaCarObject = await this.prisma.car.findUnique({
+        where: {
+          id: id,
+        },
+      });
+      if (prismaCarObject === null) {
+        throw new Error('object not found: ' + id);
+      }
+      return new Car(prismaCarObject.id, prismaCarObject.model);
+    } catch (error) {
+      console.log(error);
     }
-    return new Car(prismaCarObject.id, prismaCarObject.model);
   }
 
   async readByModel(model: string): Promise<Car> {
-    const prismaCarObject = await this.prisma.car.findFirst({
-      where: {
-        model: model,
-      },
-    });
-    if (prismaCarObject === null) {
-      throw new Error('object not found: ' + model);
+    try {
+      const prismaCarObject = await this.prisma.car.findFirst({
+        where: {
+          model: model,
+        },
+      });
+      if (prismaCarObject === null) {
+        throw new Error('object not found: ' + model);
+      }
+      return new Car(prismaCarObject.id, prismaCarObject.model);
+    } catch (error) {
+      console.log(error);
     }
-    return new Car(prismaCarObject.id, prismaCarObject.model);
   }
 
   async readAll(): Promise<Car[]> {
-    const prismaObject = await this.prisma.car.findMany({});
-    const cars: Car[] = [];
-    for (let i = 0; i < prismaObject.length; i++) {
-      cars.push(new Car(prismaObject[i].id, prismaObject[i].model));
+    try {
+      const prismaObject = await this.prisma.car.findMany({});
+      const cars: Car[] = [];
+      for (let i = 0; i < prismaObject.length; i++) {
+        cars.push(new Car(prismaObject[i].id, prismaObject[i].model));
+      }
+      return cars;
+    } catch (error) {
+      console.log(error);
     }
-    return cars;
   }
 }
