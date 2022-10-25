@@ -40,7 +40,9 @@ export class DetectCarModels implements DetectModelsUsecase {
       if (res.CustomLabels[i].Confidence === undefined) continue;
       if (res.CustomLabels[i].Confidence < 70) {
         console.log(
-          'CAR: 低確率のためスキップしました (' + res.CustomLabels[i] + ' %)',
+          'CAR: 低確率のためスキップしました (' +
+            res.CustomLabels[i].Confidence +
+            ' %)',
         );
         continue;
       }
