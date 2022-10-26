@@ -1,18 +1,26 @@
 import {
   CopyObjectCommand,
   DeleteObjectCommand,
+  DeleteObjectsCommand,
   ListObjectsCommand,
   ListObjectsCommandOutput,
   S3Client,
 } from '@aws-sdk/client-s3';
 import { Location, Car, PrismaClient } from '@prisma/client';
-import { InferenceS3Bucket } from 'src/s3/inference';
 import { v4 } from 'uuid';
 
 export const seedHandler = async (): Promise<string> => {
   const prisma = new PrismaClient();
-
   const sampleAmount = 500;
+  let errorMessage = '';
+
+  const locations: Location[] = [];
+
+  const getRandom = (min: number, max: number): number => {
+    min = Math.ceil(min);
+    max = Math.ceil(max);
+    return Math.floor(Math.random() * (max - min) + min);
+  };
 
   try {
     const initTrafficVolume = await prisma.trafficVolume.deleteMany({});
@@ -24,7 +32,6 @@ export const seedHandler = async (): Promise<string> => {
     console.log(initLocation);
 
     console.log('LOCATIONS');
-    const locations: Location[] = [];
     const location1 = await prisma.location.create({
       data: {
         address: '昭和区',
@@ -91,12 +98,6 @@ export const seedHandler = async (): Promise<string> => {
     console.log(car3);
     cars.push(car3);
 
-    const getRandom = (min: number, max: number): number => {
-      min = Math.ceil(min);
-      max = Math.ceil(max);
-      return Math.floor(Math.random() * (max - min) + min);
-    };
-
     for (let i = 0; i < sampleAmount; i++) {
       const locationIndex = getRandom(0, locations.length);
       const carIndex = getRandom(0, cars.length);
@@ -121,46 +122,78 @@ export const seedHandler = async (): Promise<string> => {
           '\n',
       );
     }
-
-    // delete pre_inference, inrefenced
-
-    // list target files
-    const files = [];
-    const prefix = 'presentation/';
-
-    const s3 = new S3Client({
-      region: process.env.REGION,
-    });
-
-    const inferencedDeleteRes = await s3.send(
-      new ListObjectsCommand({
-        Bucket: process.env.RANDOM_S3_BUCKET,
-        Prefix: 'inferenced/',
-      }),
-    );
-
-    const preInferenceFiles: string[] = [];
-    if (inferencedDeleteRes.Contents !== undefined) {
-      for (let i = 0; i < inferencedDeleteRes.Contents.length; i++) {
-        preInferenceFiles.push(inferencedDeleteRes.Contents[i].Key);
-      }
+  } catch (error) {
+    if (error instanceof Error) {
+      errorMessage += error.message + '\n';
+    } else {
+      console.log(error);
     }
+  }
 
-    for (let i = 0; i < inferencedDeleteRes.Contents.length; i++) {
-      const element = inferencedDeleteRes[i].k;
-      const deleteCommand = new DeleteObjectCommand({
-        Bucket: process.env.RANDOM_S3_BUCKET,
-        Key: element,
-      });
-      s3.send(deleteCommand);
-    }
+  const s3 = new S3Client({
+    region: process.env.REGION,
+  });
 
-    const preInferenceDeleteRes = await s3.send(
+  // delete pre_inference, inrefenced
+  // rm /pre_inference/*
+  try {
+    const preInferenceList = await s3.send(
       new ListObjectsCommand({
         Bucket: process.env.RANDOM_S3_BUCKET,
         Prefix: 'pre_inference/',
       }),
     );
+    if (preInferenceList.Contents !== undefined) {
+      const preInferenceObjects: { Key: string }[] = [];
+      for (let i = 0; i < preInferenceList.Contents.length; i++) {
+        preInferenceObjects.push({ Key: preInferenceList.Contents[i].Key });
+      }
+      preInferenceObjects.shift();
+
+      const deleteCommand = new DeleteObjectsCommand({
+        Bucket: process.env.RANDOM_S3_BUCKET,
+        Delete: {
+          Objects: preInferenceObjects,
+        },
+      });
+      s3.send(deleteCommand);
+    }
+
+    // rm /inferenced/*
+    const inferencedList = await s3.send(
+      new ListObjectsCommand({
+        Bucket: process.env.RANDOM_S3_BUCKET,
+        Prefix: 'inferenced/',
+      }),
+    );
+    if (inferencedList.Contents !== undefined) {
+      const inferencedObjects: { Key: string }[] = [];
+      for (let i = 0; i < inferencedList.Contents.length; i++) {
+        inferencedObjects.push({ Key: inferencedList.Contents[i].Key });
+      }
+      inferencedObjects.shift();
+
+      const deleteCommand = new DeleteObjectsCommand({
+        Bucket: process.env.RANDOM_S3_BUCKET,
+        Delete: {
+          Objects: inferencedObjects,
+        },
+      });
+      s3.send(deleteCommand);
+    }
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      errorMessage += error.message + '\n';
+    } else {
+      console.log(error);
+    }
+  }
+
+  // list target files
+  // optimization presentation/*
+  try {
+    const files = [];
+    const prefix = 'presentation/';
 
     const res: ListObjectsCommandOutput = await s3.send(
       new ListObjectsCommand({
@@ -203,14 +236,17 @@ export const seedHandler = async (): Promise<string> => {
       s3.send(deleteCommand);
       console.log('optimized: ' + newKey);
     }
-
-    return JSON.stringify({
-      result: 'succeed',
-    });
   } catch (error) {
-    console.log(error);
-    return JSON.stringify({
-      result: 'failed',
-    });
+    if (error instanceof Error) {
+      errorMessage += error.message + '\n';
+    } else {
+      console.log(error);
+    }
+  }
+
+  if (errorMessage === '') {
+    return 'succeed';
+  } else {
+    return errorMessage;
   }
 };
