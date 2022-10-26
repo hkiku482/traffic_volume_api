@@ -51,7 +51,6 @@ export class ReadResult implements ReadResultUsecase {
       });
     }
 
-    console.log('result:\n' + JSON.stringify(result));
     return result;
   }
 }
