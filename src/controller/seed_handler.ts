@@ -12,7 +12,7 @@ import { v4 } from 'uuid';
 export const seedHandler = async (): Promise<string> => {
   const main = async () => {
     const prisma = new PrismaClient();
-    const sampleAmount = 1;
+    const sampleAmount = 1000;
 
     const locations: Location[] = [];
     const getRandom = (min: number, max: number): number => {
@@ -230,7 +230,7 @@ export const seedHandler = async (): Promise<string> => {
   };
 
   try {
-    main();
+    await main();
     return 'succeed\n';
   } catch (error) {
     return error;
